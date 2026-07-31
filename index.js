@@ -38,14 +38,14 @@ app.use(groupRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
-
-app.listen(process.env.PORT || 3000, async () => {
-  console.log(`server is running on http://localhost:${process.env.PORT}`);
+const start = async () => {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("DB Connected!");
+
   const superAdmin = await User.findOne({
     email: process.env.SUPERADMIN_EMAIL,
   });
+
   if (!superAdmin) {
     await User.create({
       name: process.env.SUPERADMIN_NAME,
@@ -54,4 +54,14 @@ app.listen(process.env.PORT || 3000, async () => {
       role: "superAdmin",
     });
   }
-});
+};
+
+start();
+
+module.exports = app;
+
+if (require.main === module) {
+  app.listen(process.env.PORT || 3000, () => {
+    console.log(`Server is running on port ${process.env.PORT || 3000}`);
+  });
+}
