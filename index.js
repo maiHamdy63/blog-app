@@ -38,6 +38,7 @@ app.use(groupRouter);
 
 app.use(notFoundHandler);
 app.use(errorHandler);
+
 const start = async () => {
   await mongoose.connect(process.env.MONGODB_URI);
   console.log("DB Connected!");
