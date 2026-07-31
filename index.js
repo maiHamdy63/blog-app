@@ -1,3 +1,6 @@
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -22,9 +25,9 @@ app.use(morgan("dev"));
 app.use(cors());
 
 const limiter = rateLimit({
-    windowMs: 15 * 60 * 1000, //15 minutes
-    max:200, 
-    message: {message: "too many request ,please try again later"},
+  windowMs: 15 * 60 * 1000, //15 minutes
+  max: 200,
+  message: { message: "too many request ,please try again later" },
 });
 app.use(limiter);
 
@@ -37,18 +40,18 @@ app.use(notFoundHandler);
 app.use(errorHandler);
 
 app.listen(process.env.PORT || 3000, async () => {
-    console.log(`server is running on http://localhost:${process.env.PORT}`);
-    await mongoose.connect(process.env.MONGODB_URI);
-    console.log("DB Connected!");
-    const superAdmin = await User.findOne({
-        email: process.env.SUPERADMIN_EMAIL,
+  console.log(`server is running on http://localhost:${process.env.PORT}`);
+  await mongoose.connect(process.env.MONGODB_URI);
+  console.log("DB Connected!");
+  const superAdmin = await User.findOne({
+    email: process.env.SUPERADMIN_EMAIL,
+  });
+  if (!superAdmin) {
+    await User.create({
+      name: process.env.SUPERADMIN_NAME,
+      email: process.env.SUPERADMIN_EMAIL,
+      password: process.env.SUPERADMIN_PASSWORD,
+      role: "superAdmin",
     });
-    if (!superAdmin) {
-        await User.create({
-            name: process.env.SUPERADMIN_NAME,
-            email: process.env.SUPERADMIN_EMAIL,
-            password: process.env.SUPERADMIN_PASSWORD,
-            role: "superAdmin",
-        });
-    }
+  }
 });
