@@ -1,3 +1,6 @@
+const dns = require("dns");
+dns.setServers(["8.8.8.8", "1.1.1.1"]);
+
 require("dotenv").config();
 const express = require("express");
 const app = express();
@@ -27,6 +30,12 @@ const limiter = rateLimit({
   message: { message: "too many request ,please try again later" },
 });
 app.use(limiter);
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    message: "Welcome to Blog API ",
+  });
+});
 
 app.use(authRouter);
 app.use(userRouter);
